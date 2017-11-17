@@ -60,7 +60,7 @@ func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, erro
 					return hotels[i], nil
 				}
 			} else {
-				d := targ - bearing
+				d := math.Abs(targ - bearing)
 				if d > 180 {
 					d = 360 - d
 				}

@@ -17,5 +17,9 @@ func TestSearch(t *testing.T) {
 
 	hotel, err = Search(37.79096485999155, -122.40051141823338, 148.4856719970703, HotelCache)
 	assert.Nil(t, err)
-	assert.Equal(t, "Loews Regency San Francisco", hotel.Name)
+	assert.Equal(t, "Palace Hotel, a Luxury Collection Hotel, San Francisco", hotel.Name)
+
+	hotel, err = Search(37.79286925938579, -122.4003320700139, 43.22932052612305, HotelCache)
+	assert.Nil(t, err)
+	assert.Equal(t, "Le Meridien San Francisco", hotel.Name)
 }
