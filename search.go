@@ -28,6 +28,7 @@ func InitHotelCache() error {
 }
 
 var bearingThreshold float64 = 70
+var distanceThreshold float64 = 0.3
 
 type Hotel struct {
 	ID           int64   `json:"id"`
@@ -53,7 +54,7 @@ func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, erro
 		d := geo.NewPoint(hotels[i].Latitude, hotels[i].Longitude)
 		dist := o.GreatCircleDistance(d)
 		targ := o.BearingTo(d)
-		if dist < 0.5 {
+		if dist < distanceThreshold {
 			if targ < 0 && bearing < 0 || targ > 0 && bearing > 0 {
 				if math.Abs(targ-bearing) < bearingThreshold {
 					return hotels[i], nil
