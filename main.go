@@ -29,7 +29,7 @@ func main() {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		fmt.Println(hotelRequest)
+		fmt.Println("request", hotelRequest)
 		hotel, err := Search(hotelRequest.Latitude, hotelRequest.Longitude, hotelRequest.Bearing, HotelCache)
 		if err != nil {
 			http.Error(w, err.Error(), 404)
@@ -40,6 +40,7 @@ func main() {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		fmt.Println("response", string(bs))
 		w.Write(bs)
 		return
 	})
