@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/kellydunn/golang-geo"
+	"math"
 	"sort"
 	"strconv"
 )
@@ -53,25 +54,18 @@ func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, erro
 		dist := o.GreatCircleDistance(d)
 		targ := o.BearingTo(d)
 		if dist < 0.5 {
-			var matchLower, matchHigher bool
-			lowerLimit := bearing - bearingThreshold
-			if lowerLimit < -180 {
-				if targ > lowerLimit + 360 {
-					matchLower = true
+			if targ < 0 && bearing < 0 || targ > 0 && bearing > 0 {
+				if math.Abs(targ-bearing) < bearingThreshold {
+					return hotels[i], nil
 				}
-			} else if targ > lowerLimit {
-				matchLower = true
-			}
-			upperLimit := bearing + bearingThreshold
-			if upperLimit > 180 {
-				if targ <  upperLimit - 360 {
-					matchHigher = true
+			} else {
+				d := targ - bearing
+				if d > 180 {
+					d = 360 - d
 				}
-			} else if targ < upperLimit {
-				matchHigher = true
-			}
-			if matchLower && matchHigher {
-				return hotels[i], nil
+				if d < bearingThreshold {
+					return hotels[i], nil
+				}
 			}
 		}
 	}
