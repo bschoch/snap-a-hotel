@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/cors"
 	"io/ioutil"
 	"net/http"
 )
@@ -44,5 +45,6 @@ func main() {
 		w.Write(bs)
 		return
 	})
-	fmt.Println(http.ListenAndServe(":8080", mux))
+	handler := cors.Default().Handler(mux)
+	fmt.Println(http.ListenAndServe(":8080", handler))
 }
