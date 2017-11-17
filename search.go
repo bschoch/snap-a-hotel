@@ -26,7 +26,7 @@ func InitHotelCache() error {
 	return nil
 }
 
-var bearingThreshold float64 = 60
+var bearingThreshold float64 = 70
 
 type Hotel struct {
 	ID           int64   `json:"id"`
