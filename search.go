@@ -5,21 +5,36 @@ import (
 	"errors"
 	"github.com/kellydunn/golang-geo"
 	"sort"
+	"strconv"
 )
 
 var HotelCache []*Hotel
 
 func InitHotelCache() error {
-	return json.Unmarshal([]byte(hotelJSON), &HotelCache)
+	if err := json.Unmarshal([]byte(hotelJSON), &HotelCache); err != nil {
+		return err
+	}
+	for i := range HotelCache {
+		var err error
+		if HotelCache[i].Latitude, err = strconv.ParseFloat(HotelCache[i].LatitudeStr, 64); err != nil {
+			return err
+		}
+		if HotelCache[i].Longitude, err = strconv.ParseFloat(HotelCache[i].LongitudeStr, 64); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 var bearingThreshold float64 = 70
 
 type Hotel struct {
-	ID        string  `json:"id"`
-	Name      string  `json:"name"`
-	Latitude  float64 `json:"lat"`
-	Longitude float64 `json:"lng"`
+	ID           int64   `json:"id"`
+	Name         string  `json:"name"`
+	LatitudeStr  string  `json:"lat"`
+	LongitudeStr string  `json:"lng"`
+	Latitude     float64 `json:"-"`
+	Longitude    float64 `json:"-"`
 }
 
 func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, error) {
