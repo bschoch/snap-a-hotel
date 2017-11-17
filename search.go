@@ -26,7 +26,7 @@ func InitHotelCache() error {
 	return nil
 }
 
-var bearingThreshold float64 = 70
+var bearingThreshold float64 = 60
 
 type Hotel struct {
 	ID           int64   `json:"id"`
@@ -43,6 +43,9 @@ func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, erro
 		Hotels:       hotels,
 		UserLocation: o,
 	}
+	if bearing > 180 {
+		bearing -= 360
+	}
 	sort.Sort(hotelSort)
 	hotels = hotelSort.Hotels
 	for i := range hotels {
@@ -50,19 +53,24 @@ func Search(latitude, longitude, bearing float64, hotels []*Hotel) (*Hotel, erro
 		dist := o.GreatCircleDistance(d)
 		targ := o.BearingTo(d)
 		if dist < 0.5 {
-			lowerLimit := targ - bearingThreshold
-			upperLimit := targ + bearingThreshold
-			if lowerLimit < 0 && upperLimit > 360 {
-				return hotels[i], nil
-			} else if lowerLimit < 0 {
-				if bearing >= 360+lowerLimit || bearing <= upperLimit {
-					return hotels[i], nil
+			var matchLower, matchHigher bool
+			lowerLimit := bearing - bearingThreshold
+			if lowerLimit < -180 {
+				if targ > lowerLimit + 360 {
+					matchLower = true
 				}
-			} else if upperLimit > 360 {
-				if bearing <= upperLimit-360 || bearing >= upperLimit {
-					return hotels[i], nil
+			} else if targ > lowerLimit {
+				matchLower = true
+			}
+			upperLimit := bearing + bearingThreshold
+			if upperLimit > 180 {
+				if targ <  upperLimit - 360 {
+					matchHigher = true
 				}
-			} else if lowerLimit <= bearing && bearing <= upperLimit {
+			} else if targ < upperLimit {
+				matchHigher = true
+			}
+			if matchLower && matchHigher {
 				return hotels[i], nil
 			}
 		}
