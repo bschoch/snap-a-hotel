@@ -42,6 +42,7 @@ func main() {
 			return
 		}
 		fmt.Println("response", string(bs))
+		w.Header().Set("access-control-allow-origin", "*")
 		w.Write(bs)
 		return
 	})
