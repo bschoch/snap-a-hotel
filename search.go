@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/kellydunn/golang-geo"
 	"math"
+	"net/url"
 	"sort"
 	"strconv"
 	"time"
@@ -80,7 +81,7 @@ func generateLink(hotel *Hotel) *Hotel {
 	now := time.Now()
 	now = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	h := *hotel
-	h.Link = fmt.Sprintf("https://pointshound.com/hotel/results/%d/?checkin=%s&checkout=%s&adults=1&flow=earn&locale=en-US&currency=USD&destination_id=a_6000581&program_id=16", hotel.ID, now.Format("2006-01-02T15:04:05-07:00"), now.Add(24*time.Hour).Format("2006-01-02T15:04:05-07:00"))
+	h.Link = fmt.Sprintf("https://pointshound.com/hotel/results/%d/?%s", hotel.ID, url.QueryEscape(fmt.Sprintf("checkin=%s&checkout=%s&adults=1&flow=earn&locale=en-US&currency=USD&destination_id=a_6000581&program_id=16", now.Format("2006-01-02T15:04:05-07:00"), now.Add(24*time.Hour).Format("2006-01-02T15:04:05-07:00"))))
 	return &h
 }
 
