@@ -21,21 +21,22 @@ func main() {
 			return
 		}
 		defer r.Body.Close()
-		var hotelRequest struct {
+		var request struct {
 			Latitude  float64 `json:"latitude"`
 			Longitude float64 `json:"longitude"`
 			Bearing   float64 `json:"bearing"`
 		}
-		if err := json.Unmarshal(body, &hotelRequest); err != nil {
+		if err := json.Unmarshal(body, &request); err != nil {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		fmt.Println("request", hotelRequest)
-		hotel, err := Search(hotelRequest.Latitude, hotelRequest.Longitude, hotelRequest.Bearing, HotelCache)
+		fmt.Println("request", request)
+		hotel, err := Search(request.Latitude, request.Longitude, request.Bearing, HotelCache)
 		if err != nil {
 			http.Error(w, err.Error(), 404)
 			return
 		}
+
 		bs, err := json.Marshal(hotel)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
